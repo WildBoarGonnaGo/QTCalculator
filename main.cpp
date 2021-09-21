@@ -1,12 +1,46 @@
 ﻿#include <calculator.hpp>
 #include <QApplication>
+#include <QMenuBar>
+#include <QMenu>
+#include <QAction>
+#include <QWidget>
+#include <QVBoxLayout>
 
 int main(int argc, char *argv[]) {
     QApplication    app(argc, argv);
+    QMenu           *itemCheckMenu = new QMenu("&Menu");
+    QMenuBar        mbar;
+    QWidget         finWidget;
+
+    QAction         *calcSimpleCheckPtr = itemCheckMenu->addAction("&Simple");
+    calcSimpleCheckPtr->setCheckable(true);
+    calcSimpleCheckPtr->setChecked(true);
+
+    QAction         *calcNumSysCheckPtr = itemCheckMenu->addAction("&Numeral System");
+    calcNumSysCheckPtr->setCheckable(true);
+    calcNumSysCheckPtr->setChecked(false);
+
+    itemCheckMenu->addSeparator();
+    itemCheckMenu->addAction("&Exit", &app, SLOT(quit()));
+
+    mbar.addMenu(itemCheckMenu);
+
     Calculator  *obj = new Calculator;
-    obj->resize(230, 200);
+    QVBoxLayout *vbox = new QVBoxLayout;
+    vbox->addWidget(&mbar);
+    vbox->addWidget(obj);
+    vbox->setContentsMargins(0, 0, 0, 0);
+    vbox->setSpacing(0);
+
+    /*obj->resize(230, 200);
     obj->setWindowTitle("QtCalculator");
-    obj->show();
+    obj->show();*/
+
+    finWidget.setLayout(vbox);
+    finWidget.resize(210, 320);
+    finWidget.setWindowTitle("Calculator");
+    finWidget.setContentsMargins(0, 0, 0, 5);
+    finWidget.show();
 
     return (app.exec());
 }
