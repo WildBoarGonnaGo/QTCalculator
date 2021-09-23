@@ -1,4 +1,4 @@
-#ifndef CALCULATOR_HPP
+﻿#ifndef CALCULATOR_HPP
 # define CALCULATOR_HPP
 
 #include <QtWidgets/QWidget>
