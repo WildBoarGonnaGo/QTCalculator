@@ -9,7 +9,8 @@ set(CMAKE_AUTORCC ON)
 
 find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
 
-add_executable(calculator calculator.cpp main.cpp include/calculator.hpp)
+add_executable(calculator calculator.cpp main.cpp mainwindow.cpp numsyscalc.cpp numSysValidator.cpp
+		include/calculator.hpp include/mainwindow.h include/numsyscalc.h include/numSysValidator.h)
 target_include_directories(calculator PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include")
 target_link_libraries(calculator PRIVATE Qt5::Core Qt5::Widgets)
 

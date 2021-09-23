@@ -12,19 +12,19 @@ public:
 class numSysValidatorOct : public QValidator {
 public:
     numSysValidatorOct(QObject *parent = nullptr);
-    virtual State validate(QString *str, int &pos) const;
+    virtual State validate(QString &str, int &pos) const;
 };
 
 class numSysValidatorHex : public QValidator {
 public:
     numSysValidatorHex(QObject *parent = nullptr);
-    virtual State validate(QString &str, int &pos);
+    virtual State validate(QString &str, int &pos) const;
 };
 
 class numSysValidatorBin : public QValidator {
 public:
     numSysValidatorBin(QObject *parent = nullptr);
-    virtual State validate(QString &str, int &pos);
+    virtual State validate(QString &str, int &pos) const;
 };
 
 #endif

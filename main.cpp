@@ -1,14 +1,9 @@
-﻿#include <calculator.hpp>
-#include <QApplication>
-#include <QMenuBar>
-#include <QMenu>
-#include <QAction>
-#include <QWidget>
-#include <QVBoxLayout>
+﻿#include <mainwindow.h>
 
 int main(int argc, char *argv[]) {
     QApplication    app(argc, argv);
-    QMenu           *itemCheckMenu = new QMenu("&Menu");
+	MainWindow      mainObj;
+    /*QMenu           *itemCheckMenu = new QMenu("&Menu");
     QMenuBar        mbar;
     QWidget         finWidget;
 
@@ -32,15 +27,18 @@ int main(int argc, char *argv[]) {
     vbox->setContentsMargins(0, 0, 0, 0);
     vbox->setSpacing(0);
 
-    /*obj->resize(230, 200);
+    obj->resize(230, 200);
     obj->setWindowTitle("QtCalculator");
-    obj->show();*/
+    obj->show();
 
     finWidget.setLayout(vbox);
     finWidget.resize(210, 320);
     finWidget.setWindowTitle("Calculator");
     finWidget.setContentsMargins(0, 0, 0, 5);
-    finWidget.show();
+    finWidget.show();*/
+
+	mainObj.setQApplication(&app);
+	mainObj.show();
 
     return (app.exec());
 }

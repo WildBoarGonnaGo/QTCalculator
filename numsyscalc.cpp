@@ -4,25 +4,25 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 
-numSysCalcWgt::numSysCalcWgt(QWidget *wgtptr) : QWidget(wgtptr), _numDec(0),
+numSysCalcWgt::numSysCalcWgt(QWidget *wgtptr) : QWidget(wgtptr), _numDec(QString()),
     _numOct(QString()), _numHex(QString()), _numBuffer(0), _numTypeInput(new QLabel()),
     _rightOutputLabel(new QLabel()) {
-    _numInput = new ComboBox;
+    _numInput = new QComboBox;
     QLabel      *chooseInput = new QLabel("&Type of numerical system");
     QStringList strList;
 
-    strList << "&Decimal" << "&Octal" << "&Hexadecimal" << "&Binary";
+    strList << "Decimal" << "Octal" << "Hexadecimal" << "Binary";
     _numInput->addItems(strList);
     _numInput->setEditable(false);
     chooseInput->setBuddy(_numInput);
 
     _inputNumber = new QLineEdit();
     _numTypeInput->setText(_numInput->currentText() + " input");
-    _numTypeInput->setBuddy(inputNumber);
+    _numTypeInput->setBuddy(_inputNumber);
 
     _rightOutputLabel->setAlignment(Qt::AlignCenter);
     _rightOutputLabel->setText("There will be your output here!");
-    _rightOutputLabel->resize(200, 200);
+    _rightOutputLabel->setFixedSize(250, 250);
     _rightOutputLabel->setFrameStyle(QFrame::Box | QFrame::Plain);
     _rightOutputLabel->setLineWidth(3);
     _rightOutputLabel->setContentsMargins(5, 5, 5, 5);
@@ -44,6 +44,7 @@ numSysCalcWgt::numSysCalcWgt(QWidget *wgtptr) : QWidget(wgtptr), _numDec(0),
     leftEditBar->addWidget(_numTypeInput);
     leftEditBar->addLayout(lineEditBox);
     leftEditBar->addWidget(calcButton, 0, Qt::AlignHCenter);
+	leftEditBar->setContentsMargins(0, 0, 0, 100);
 
     QHBoxLayout *totalLayout = new QHBoxLayout();
     totalLayout->addLayout(leftEditBar);
@@ -60,7 +61,7 @@ numSysCalcWgt::numSysCalcWgt(QWidget *wgtptr) : QWidget(wgtptr), _numDec(0),
 void    numSysCalcWgt::changeInputMode() {
     QString inputLblStr = _numInput->currentText();
 
-    numTypeInput->setText(_numInput->currentText() + " input");
+    _numTypeInput->setText(_numInput->currentText() + " input");
 
     if (!inputLblStr.compare("Decimal")) {
         _inputNumber->setValidator(_decValidatorPtr);
@@ -107,7 +108,7 @@ void    numSysCalcWgt::outputResult() {
 
      _rightOutputLabel->setText("<h2>Computation results:</h2>"
                                 "<p>Dec: " + _numDec + "</p>"
-                                "<p>Hex: " + _numHex.toUpper() + "</p>"
+                                "<p>Hex: " + _numHex + "</p>"
                                 "<p>Oct: " + _numOct + "</p>"
                                 "<p>Bin: " + _numBin + "</p>");
 }

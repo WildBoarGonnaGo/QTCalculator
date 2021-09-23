@@ -3,16 +3,16 @@
 
 numSysValidatorDec::numSysValidatorDec(QObject *parent) : QValidator(parent) { }
 
-State numSysValidatorDec::validate(QString &str, int &pos) const {
+QValidator::State numSysValidatorDec::validate(QString &str, int &pos) const {
     QRegExp nums("[0-9]");
     if (!str.contains(nums))
         return (Invalid);
     return (Acceptable);
 }
 
-numSysValidatorHex::numSysValidatorOct(QObject *parent) : QValidator(parent) { }
+numSysValidatorOct::numSysValidatorOct(QObject *parent) : QValidator(parent) { }
 
-State numSysValidatorOct::validate(QString &str, int &pos) const {
+QValidator::State numSysValidatorOct::validate(QString &str, int &pos) const {
     QRegExp nums("[0-7]");
     if (!str.contains(nums))
         return (Invalid);
@@ -21,7 +21,7 @@ State numSysValidatorOct::validate(QString &str, int &pos) const {
 
 numSysValidatorHex::numSysValidatorHex(QObject *parent) : QValidator(parent) { }
 
-State numSysValidatorHex::validate(QString &str, int &pos) const {
+QValidator::State numSysValidatorHex::validate(QString &str, int &pos) const {
     QRegExp nums("[0-9a-fA-F]");
     if (!str.contains(nums))
         return (Invalid);
@@ -30,7 +30,7 @@ State numSysValidatorHex::validate(QString &str, int &pos) const {
 
 numSysValidatorBin::numSysValidatorBin(QObject *parent) : QValidator(parent) { }
 
-State numSysValidatorBin::validate(QString &str, int &pos) const {
+QValidator::State numSysValidatorBin::validate(QString &str, int &pos) const {
     QRegExp nums("[01]");
     if (!str.contains(nums))
         return (Invalid);
