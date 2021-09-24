@@ -3,6 +3,8 @@
 #include <QPushButton>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QShortcut>
+#include <QKeySequence>
 
 numSysCalcWgt::numSysCalcWgt(QWidget *wgtptr) : QWidget(wgtptr), _numDec(QString()),
     _numOct(QString()), _numHex(QString()), _numBuffer(0), _numTypeInput(new QLabel()),
@@ -20,18 +22,16 @@ numSysCalcWgt::numSysCalcWgt(QWidget *wgtptr) : QWidget(wgtptr), _numDec(QString
     _numTypeInput->setText(_numInput->currentText() + " input");
     _numTypeInput->setBuddy(_inputNumber);
 
-    _rightOutputLabel->setAlignment(Qt::AlignCenter);
+    _rightOutputLabel->setAlignment(Qt::AlignVCenter);
     _rightOutputLabel->setText("There will be your output here!");
-    _rightOutputLabel->setFixedSize(250, 250);
-    _rightOutputLabel->setFrameStyle(QFrame::Box | QFrame::Plain);
-    _rightOutputLabel->setLineWidth(3);
-    _rightOutputLabel->setContentsMargins(5, 5, 5, 5);
+    _rightOutputLabel->setFixedSize(300, 300);
+    _rightOutputLabel->setContentsMargins(70, 40, 70, 40);
 
     QPushButton *calcButton = new QPushButton("&Calculate");
-    _decValidatorPtr = new numSysValidatorDec();
-    _hexValidatorPtr = new numSysValidatorHex();
-    _octValidatorPtr = new numSysValidatorOct();
-    _binValidatorPtr = new numSysValidatorBin();
+    _decValidatorPtr = new numSysValidatorDec(_inputNumber);
+    _hexValidatorPtr = new numSysValidatorHex(_inputNumber);
+    _octValidatorPtr = new numSysValidatorOct(_inputNumber);
+    _binValidatorPtr = new numSysValidatorBin(_inputNumber);
     _lineInputPrefix = new QLabel();
 
     QHBoxLayout *lineEditBox = new QHBoxLayout();
@@ -44,17 +44,26 @@ numSysCalcWgt::numSysCalcWgt(QWidget *wgtptr) : QWidget(wgtptr), _numDec(QString
     leftEditBar->addWidget(_numTypeInput);
     leftEditBar->addLayout(lineEditBox);
     leftEditBar->addWidget(calcButton, 0, Qt::AlignHCenter);
-	leftEditBar->setContentsMargins(0, 0, 0, 100);
+    leftEditBar->setContentsMargins(0, 0, 0, 120);
+
+    QFrame  *vertSep = new QFrame();
+    vertSep->setFrameShape(QFrame::VLine);
+    vertSep->setFrameShadow(QFrame::Sunken);
 
     QHBoxLayout *totalLayout = new QHBoxLayout();
     totalLayout->addLayout(leftEditBar);
+    totalLayout->addWidget(vertSep);
     totalLayout->addWidget(_rightOutputLabel);
+
+    QShortcut   *keyEnter = new QShortcut(QKeySequence(Qt::Key_Enter), calcButton);
+    QShortcut   *keyReturn = new QShortcut(QKeySequence(Qt::Key_Return), calcButton);
 
     connect(_numInput, SIGNAL(currentIndexChanged(const QString &)),
         this, SLOT(changeInputMode()));
     connect(calcButton, SIGNAL(clicked(bool)),
         this, SLOT(outputResult()));
-
+    connect(keyEnter, SIGNAL(activated()), this, SLOT(outputResult()));
+    connect(keyReturn, SIGNAL(activated()), this, SLOT(outputResult()));
     setLayout(totalLayout);
 }
 
@@ -82,35 +91,37 @@ void    numSysCalcWgt::changeInputMode() {
 
 void    numSysCalcWgt::outputResult() {
     QString inputLblStr = _numInput->currentText();
+    bool    ok;
 
     if (!inputLblStr.compare("Decimal")) {
         _numDec = _inputNumber->text();
-        _numHex = "0x" + QString::number(_numDec.toInt(), 16);
-        _numOct = "0o" + QString::number(_numDec.toInt(), 8);
-        _numBin = "0b" + QString::number(_numDec.toInt(), 2);
+        _numHex = QString::number(_numDec.toInt(), 16);
+        _numOct = QString::number(_numDec.toInt(), 8);
+        _numBin = QString::number(_numDec.toInt(), 2);
         _lineInputPrefix->setText("");
     } else if (!inputLblStr.compare("Hexadecimal")) {
-        _numHex = "0x" + _inputNumber->text();
-        _numDec = QString::number(_numHex.toInt(), 10);
-        _numOct = "0o" + QString::number(_numHex.toInt(), 8);
-        _numBin = "0b" + QString::number(_numHex.toInt(), 2);
+        _numHex = _inputNumber->text();
+        _numDec.setNum(_numHex.toUInt(&ok, 16));
+        _numOct.setNum(_numHex.toUInt(&ok, 16), 8);
+        _numBin.setNum(_numHex.toUInt(&ok, 16), 2);
     } else if (!inputLblStr.compare("Octal")) {
-        _numOct = "0o" + _inputNumber->text();
-        _numDec = QString::number(_numOct.toInt(), 10);
-        _numHex = "0x" + QString::number(_numOct.toInt(), 16);
-        _numBin = "0b" + QString::number(_numOct.toInt(), 2);
+        _numOct = _inputNumber->text();
+        _numDec.setNum(_numOct.toUInt(&ok, 8));
+        _numHex.setNum(_numOct.toUInt(&ok, 8), 16);
+        _numBin.setNum(_numOct.toUInt(&ok, 8), 2);
     } else {
-        _numBin = "0b" + _inputNumber->text();
-        _numDec = QString::number(_numBin.toInt(), 10);
-        _numHex = "0x" + QString::number(_numBin.toInt(), 16);
-        _numOct = "0o" + QString::number(_numBin.toInt(), 8);
+        _numBin = _inputNumber->text();
+        _numDec.setNum(_numBin.toUInt(&ok, 2));
+        _numHex.setNum(_numBin.toUInt(&ok, 2), 16);
+        _numOct.setNum(_numHex.toUInt(&ok, 2), 8);
     }
 
-     _rightOutputLabel->setText("<h2>Computation results:</h2>"
+     _rightOutputLabel->setText("<h2>Computation</h2>"
+                                "<h2>results:</h2>"
                                 "<p>Dec: " + _numDec + "</p>"
-                                "<p>Hex: " + _numHex + "</p>"
-                                "<p>Oct: " + _numOct + "</p>"
-                                "<p>Bin: " + _numBin + "</p>");
+                                "<p>Hex: 0x" + _numHex + "</p>"
+                                "<p>Oct: 0o" + _numOct + "</p>"
+                                "<p>Bin: 0b" + _numBin + "</p>");
 }
 
 

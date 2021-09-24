@@ -18,7 +18,7 @@ private:
     QApplication        *_mainApp;
 	QAction             *_calcSimpleCheckPtr;
 	QAction             *_calcNumSysCheckPtr;
-	QVBoxLayout         *_tmpPtr;
+    QVBoxLayout         *_vboxLayPtr;
 private slots:
     void                menuCheckLinesVerify();
 };
