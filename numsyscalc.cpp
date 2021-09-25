@@ -5,14 +5,17 @@
 #include <QVBoxLayout>
 #include <QShortcut>
 #include <QKeySequence>
+#include <QRegExp>
 
 numSysCalcWgt::numSysCalcWgt(QWidget *wgtptr) : QWidget(wgtptr), _numDec(QString()),
-    _numOct(QString()), _numHex(QString()), _numBuffer(0), _numTypeInput(new QLabel()),
+    _numOct(QString()), _numHex(QString()), _numTypeInput(new QLabel()),
     _rightOutputLabel(new QLabel()) {
     _numInput = new QComboBox;
     QLabel      *chooseInput = new QLabel("&Type of numerical system");
-    QStringList strList;
+    QStringList         strList;
+	QRegExp             tmp("[0-9]+");
 
+	_regexValidPtr = new QRegExpValidator(tmp);
     strList << "Decimal" << "Octal" << "Hexadecimal" << "Binary";
     _numInput->addItems(strList);
     _numInput->setEditable(false);
@@ -22,17 +25,14 @@ numSysCalcWgt::numSysCalcWgt(QWidget *wgtptr) : QWidget(wgtptr), _numDec(QString
     _numTypeInput->setText(_numInput->currentText() + " input");
     _numTypeInput->setBuddy(_inputNumber);
 
-    _rightOutputLabel->setAlignment(Qt::AlignVCenter);
-    _rightOutputLabel->setText("There will be your output here!");
+    //_rightOutputLabel->setAlignment(Qt::AlignVCenter);
+    _rightOutputLabel->setText("There will be your output!");
     _rightOutputLabel->setFixedSize(300, 300);
-    _rightOutputLabel->setContentsMargins(70, 40, 70, 40);
+    _rightOutputLabel->setContentsMargins(70, 55, 70, 55);
 
     QPushButton *calcButton = new QPushButton("&Calculate");
-    _decValidatorPtr = new numSysValidatorDec(_inputNumber);
-    _hexValidatorPtr = new numSysValidatorHex(_inputNumber);
-    _octValidatorPtr = new numSysValidatorOct(_inputNumber);
-    _binValidatorPtr = new numSysValidatorBin(_inputNumber);
     _lineInputPrefix = new QLabel();
+	_inputNumber->setValidator(_regexValidPtr);
 
     QHBoxLayout *lineEditBox = new QHBoxLayout();
     lineEditBox->addWidget(_lineInputPrefix);
@@ -44,7 +44,7 @@ numSysCalcWgt::numSysCalcWgt(QWidget *wgtptr) : QWidget(wgtptr), _numDec(QString
     leftEditBar->addWidget(_numTypeInput);
     leftEditBar->addLayout(lineEditBox);
     leftEditBar->addWidget(calcButton, 0, Qt::AlignHCenter);
-    leftEditBar->setContentsMargins(0, 0, 0, 120);
+    leftEditBar->setContentsMargins(0, 0, 0, 140);
 
     QFrame  *vertSep = new QFrame();
     vertSep->setFrameShape(QFrame::VLine);
@@ -69,24 +69,25 @@ numSysCalcWgt::numSysCalcWgt(QWidget *wgtptr) : QWidget(wgtptr), _numDec(QString
 
 void    numSysCalcWgt::changeInputMode() {
     QString inputLblStr = _numInput->currentText();
+	QRegExp tmpRegex;
 
     _numTypeInput->setText(_numInput->currentText() + " input");
-
     if (!inputLblStr.compare("Decimal")) {
-        _inputNumber->setValidator(_decValidatorPtr);
+		tmpRegex.setPattern("[0-9]+");
         _lineInputPrefix->setText("");
     }
     else if (!inputLblStr.compare("Octal")) {
-        _inputNumber->setValidator(_octValidatorPtr);
+	    tmpRegex.setPattern("[0-7]+");
         _lineInputPrefix->setText("0o: ");
     }
     else if (!inputLblStr.compare("Hexadecimal")) {
-        _inputNumber->setValidator(_hexValidatorPtr);
+	    tmpRegex.setPattern("[0-9A-Fa-f]+");
         _lineInputPrefix->setText("0x: ");
     } else {
-        _inputNumber->setValidator(_binValidatorPtr);
+	    tmpRegex.setPattern("[01]+");
         _lineInputPrefix->setText("0b: ");
     }
+	_regexValidPtr->setRegExp(tmpRegex);
 }
 
 void    numSysCalcWgt::outputResult() {
@@ -116,12 +117,12 @@ void    numSysCalcWgt::outputResult() {
         _numOct.setNum(_numHex.toUInt(&ok, 2), 8);
     }
 
-     _rightOutputLabel->setText("<h2>Computation</h2>"
-                                "<h2>results:</h2>"
-                                "<p>Dec: " + _numDec + "</p>"
-                                "<p>Hex: 0x" + _numHex + "</p>"
-                                "<p>Oct: 0o" + _numOct + "</p>"
-                                "<p>Bin: 0b" + _numBin + "</p>");
+     _rightOutputLabel->setText("<style> p { line-height: 40%; } </style>"
+			                    "<h3>Computation results:</h3>"
+                                "<p>Dec:    " + _numDec + "</p>"
+                                "<p>Hex:    0x" + _numHex + "</p>"
+                                "<p>Oct:    0o" + _numOct + "</p>"
+                                "<p>Bin:    0b" + _numBin + "</p>");
 }
 
 

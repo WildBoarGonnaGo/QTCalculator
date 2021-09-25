@@ -5,7 +5,7 @@
 # include <QLabel>
 # include <QLineEdit>
 # include <QComboBox>
-# include <numSysValidator.h>
+# include <QRegExpValidator>
 
 class numSysCalcWgt : public QWidget {
     Q_OBJECT
@@ -16,15 +16,11 @@ private:
     QString             _numOct;
     QString             _numHex;
     QString             _numBin;
-    int                 _numBuffer;
     QLabel              *_numTypeInput;
     QLabel              *_rightOutputLabel;
     QLineEdit           *_inputNumber;
     QComboBox           *_numInput;
-    numSysValidatorDec  *_decValidatorPtr;
-    numSysValidatorHex  *_hexValidatorPtr;
-    numSysValidatorOct  *_octValidatorPtr;
-    numSysValidatorBin  *_binValidatorPtr;
+	QRegExpValidator    *_regexValidPtr;
     QLabel              *_lineInputPrefix;
 private slots:
     void        outputResult();
