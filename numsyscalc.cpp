@@ -25,10 +25,10 @@ numSysCalcWgt::numSysCalcWgt(QWidget *wgtptr) : QWidget(wgtptr), _numDec(QString
     _numTypeInput->setText(_numInput->currentText() + " input");
     _numTypeInput->setBuddy(_inputNumber);
 
-    //_rightOutputLabel->setAlignment(Qt::AlignVCenter);
+    _rightOutputLabel->setAlignment(Qt::AlignCenter);
     _rightOutputLabel->setText("There will be your output!");
     _rightOutputLabel->setFixedSize(300, 300);
-    _rightOutputLabel->setContentsMargins(70, 55, 70, 55);
+    _rightOutputLabel->setContentsMargins(0, 0, 0, 0);
 
     QPushButton *calcButton = new QPushButton("&Calculate");
     _lineInputPrefix = new QLabel();
@@ -74,18 +74,18 @@ void    numSysCalcWgt::changeInputMode() {
     _numTypeInput->setText(_numInput->currentText() + " input");
     if (!inputLblStr.compare("Decimal")) {
 		tmpRegex.setPattern("[0-9]+");
-        _lineInputPrefix->setText("");
+        _lineInputPrefix->setText("   ");
     }
     else if (!inputLblStr.compare("Octal")) {
 	    tmpRegex.setPattern("[0-7]+");
-        _lineInputPrefix->setText("0o: ");
+        _lineInputPrefix->setText("<b>0o: </b>");
     }
     else if (!inputLblStr.compare("Hexadecimal")) {
 	    tmpRegex.setPattern("[0-9A-Fa-f]+");
-        _lineInputPrefix->setText("0x: ");
+        _lineInputPrefix->setText("<b>0x: </b>");
     } else {
 	    tmpRegex.setPattern("[01]+");
-        _lineInputPrefix->setText("0b: ");
+        _lineInputPrefix->setText("<b>0b: </b>");
     }
 	_regexValidPtr->setRegExp(tmpRegex);
 }
@@ -114,15 +114,29 @@ void    numSysCalcWgt::outputResult() {
         _numBin = _inputNumber->text();
         _numDec.setNum(_numBin.toUInt(&ok, 2));
         _numHex.setNum(_numBin.toUInt(&ok, 2), 16);
-        _numOct.setNum(_numHex.toUInt(&ok, 2), 8);
+        _numOct.setNum(_numBin.toUInt(&ok, 2), 8);
     }
 
-     _rightOutputLabel->setText("<style> p { line-height: 40%; } </style>"
-			                    "<h3>Computation results:</h3>"
-                                "<p>Dec:    " + _numDec + "</p>"
-                                "<p>Hex:    0x" + _numHex + "</p>"
-                                "<p>Oct:    0o" + _numOct + "</p>"
-                                "<p>Bin:    0b" + _numBin + "</p>");
+     _rightOutputLabel->setText("<style> p { line-height: 40%; } br { line-height: 20% }</style>"
+                                "<h3>Computation results:</h3><br>"
+                                "<table align=\"center\">"
+                                "   <tr>"
+                                "       <td width=\"80\">Dec:</td>"
+                                "       <td>" + _numDec + "</td>"
+                                "   </tr>"
+                                "   <tr>"
+                                "       <td>Hex:</td>"
+                                "       <td>0x" + _numHex + "</td>"
+                                "   </tr>"
+                                "   <tr>"
+                                "       <td>Oct:</td>"
+                                "       <td>0o" + _numOct + "</td>"
+                                "   </tr>"
+                                "   <tr>"
+                                "       <td>Bin:</td>"
+                                "       <td>0b" + _numBin + "</td>"
+                                "   </tr>"
+                                "</table>");
 }
 
 
